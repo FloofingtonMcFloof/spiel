@@ -121,39 +121,6 @@ Mini-Garçonnière im Altbau (20m²)
   <button onclick="payCinema()">Ja (25€)</button>
   <button onclick="nextScreen(6)">Nein</button>
 </div>
-
-const randomEvents = [
-  { text: "Waschmaschine kaputt 💥", cost: 250 },
-  { text: "Nachzahlung für Energie 🔥", cost: 180 },
-  { text: "Geburtstagsgeschenk 🎁", cost: 40 },
-  { text: "Neue Schuhe für dein Kind 👟", cost: 90 },
-  { text: "Arztkosten 🏥", cost: 120 },
-  { text: "Reparatur am Fahrrad 🚲", cost: 60 }
-];
-
-function showRandomEvent() {
-  const container = document.getElementById("eventContainer");
-  let counter = 0;
-
-  const shuffle = setInterval(() => {
-    const random = randomEvents[Math.floor(Math.random() * randomEvents.length)];
-    container.innerHTML = `<h2>${random.text}</h2>`;
-    counter++;
-
-    if (counter > 15) {
-      clearInterval(shuffle);
-
-      const finalEvent = randomEvents[Math.floor(Math.random() * randomEvents.length)];
-      budget -= finalEvent.cost;
-
-      container.innerHTML = `
-        <h2>${finalEvent.text}</h2>
-        <p>Kosten: ${finalEvent.cost} €</p>
-        <button onclick="showResult()">Wie viel bleibt übrig?</button>
-      `;
-    }
-  }, 100);
-}
   
 <div id="screen6" class="screen">
   <h2>🎲 Unerwartetes Ereignis</h2>
