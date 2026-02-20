@@ -31,7 +31,13 @@ button:hover {
 .screen {
   display: none;
 }
-
+  
+.selected {
+  background-color: #2e7d32;
+  color: white;
+  transform: scale(1.05);
+}
+  
 .active {
   display: block;
 }
@@ -75,9 +81,17 @@ button:hover {
 
 <div id="screen2" class="screen">
   <h2>🏠 Wohnung wählen</h2>
-  <button onclick="payRent(850)">Kleine Stadt nahe Wien – 40m² (850€)</button>
-  <button onclick="payRent(1400)">Große moderne Wohnung in Wien – 100m² (1400€)</button>
-  <button onclick="payRent(500)">Mini-Garçonnière in Wien – 20m² (500€)</button>
+<button onclick="chooseRent(850)">
+Kleine Wohnung nahe Wien (40m²)
+</button>
+
+<button onclick="chooseRent(1400)">
+Moderne große Wohnung in Wien (100m²)
+</button>
+
+<button onclick="chooseRent(500)">
+Mini-Garçonnière im Altbau (20m²)
+</button>
 </div>
 
 <div id="screen3" class="screen">
@@ -90,6 +104,16 @@ button:hover {
   <h2>🛒 Lebensmitteleinkauf</h2>
   <div id="foodButtons"></div>
   <button onclick="nextScreen(5)">Weiter</button>
+  button.onclick = () => {
+  budget -= item.price;
+
+  if (button.classList.contains("selected")) {
+    button.classList.remove("selected");
+    budget += item.price;
+  } else {
+    button.classList.add("selected");
+  }
+};
 </div>
 
 <div id="screen5" class="screen">
@@ -98,6 +122,39 @@ button:hover {
   <button onclick="nextScreen(6)">Nein</button>
 </div>
 
+const randomEvents = [
+  { text: "Waschmaschine kaputt 💥", cost: 250 },
+  { text: "Nachzahlung für Energie 🔥", cost: 180 },
+  { text: "Geburtstagsgeschenk 🎁", cost: 40 },
+  { text: "Neue Schuhe für dein Kind 👟", cost: 90 },
+  { text: "Arztkosten 🏥", cost: 120 },
+  { text: "Reparatur am Fahrrad 🚲", cost: 60 }
+];
+
+function showRandomEvent() {
+  const container = document.getElementById("eventContainer");
+  let counter = 0;
+
+  const shuffle = setInterval(() => {
+    const random = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+    container.innerHTML = `<h2>${random.text}</h2>`;
+    counter++;
+
+    if (counter > 15) {
+      clearInterval(shuffle);
+
+      const finalEvent = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+      budget -= finalEvent.cost;
+
+      container.innerHTML = `
+        <h2>${finalEvent.text}</h2>
+        <p>Kosten: ${finalEvent.cost} €</p>
+        <button onclick="showResult()">Wie viel bleibt übrig?</button>
+      `;
+    }
+  }, 100);
+}
+  
 <div id="screen6" class="screen">
   <h2>🎲 Unerwartetes Ereignis</h2>
   <div id="randomEvent"></div>
@@ -133,21 +190,21 @@ function payUtilities() {
   nextScreen(4);
 }
 
-const foods = [
-  {name:"Brot", price:3},
-  {name:"Reis", price:2},
-  {name:"Nudeln", price:2},
-  {name:"Linsen", price:3},
-  {name:"Kartoffeln", price:4},
-  {name:"Huhn", price:8},
-  {name:"Rindfleisch", price:14},
-  {name:"Lachs", price:15},
-  {name:"Sushi", price:12},
-  {name:"McDonalds", price:10},
-  {name:"Gurke", price:1.5},
-  {name:"Tomaten", price:3},
-  {name:"Äpfel", price:4},
-  {name:"Kiwi", price:5}
+const foodItems = [
+  { name: "Brot (1 Laib)", price: 3.20 },
+  { name: "Nudeln (1 kg)", price: 2.00 },
+  { name: "Reis (1 kg)", price: 2.50 },
+  { name: "Lachs (500g)", price: 8.90 },
+  { name: "Hähnchen (1 kg)", price: 9.50 },
+  { name: "Rindfleisch (1 kg)", price: 15.00 },
+  { name: "Linsen (1 kg)", price: 3.00 },
+  { name: "Kartoffeln (2 kg)", price: 4.00 },
+  { name: "Sushi (Box)", price: 12.00 },
+  { name: "McDonalds Menü", price: 11.00 },
+  { name: "Gurke", price: 1.50 },
+  { name: "Tomaten (1 kg)", price: 3.50 },
+  { name: "Kiwi (4 Stück)", price: 2.80 },
+  { name: "Äpfel (1 kg)", price: 2.90 }
 ];
 
 foods.forEach(item=>{
@@ -177,15 +234,13 @@ function showRandomEvent(){
 
 showRandomEvent();
 
-function showResult(){
-  nextScreen(7);
-  let result = document.getElementById("result");
-  result.innerText = budget.toFixed(2) + " €";
+function showResult() {
+  const result = document.getElementById("result");
 
-  if(budget < 0){
-    result.classList.add("negative");
+  if (budget < 0) {
+    result.innerHTML = `<h1 style="color:red;font-size:48px;">${budget} €</h1>`;
   } else {
-    result.classList.add("positive");
+    result.innerHTML = `<h1 style="color:green;font-size:48px;">${budget} €</h1>`;
   }
 }
 
