@@ -130,7 +130,6 @@ function startGame() {
 }
 
 function showHousing() {
-  launchConfetti(true); // jedna řada při změně obrazovky
   document.getElementById("content").innerHTML = `
     <h2>Wo möchtest du wohnen?</h2>
     <button class="big-button" onclick="chooseRent(850)">Kleine Wohnung nahe Wien (40m²)</button>
@@ -141,7 +140,6 @@ function showHousing() {
 
 function chooseRent(amount) {
   budget -= amount;
-  launchConfetti(true);
   document.getElementById("content").innerHTML = `
     <h2>Fixkosten zahlen</h2>
     <button class="big-button" onclick="payUtilities()">Telefon, Internet, Strom, Wasser zahlen</button>
@@ -150,12 +148,10 @@ function chooseRent(amount) {
 
 function payUtilities() {
   budget -= 500;
-  launchConfetti(true);
   showFoodSelection();
 }
 
 function showFoodSelection() {
-  launchConfetti(true);
   let html = "<h2>Was kaufst du diesen Monat ein?</h2>";
   foodItems.forEach((item, index) => {
     html += `<button onclick="toggleFood(${index}, this)">
@@ -177,7 +173,6 @@ function toggleFood(index, button) {
 }
 
 function goCinema() {
-  launchConfetti(true);
   document.getElementById("content").innerHTML = `
     <h2>Willst du mit Freunden ins Kino gehen? 🎬</h2>
     <button class="big-button" onclick="payCinema(true)">Ja</button>
