@@ -85,20 +85,24 @@ let budget = 0;
 const salary = 1600; // minimální měsíční příjem
 
 const foodItems = [
-  { name: "Brot (1 Laib)", price: 3.20 },
-  { name: "Nudeln (1 kg)", price: 2.00 },
-  { name: "Reis (1 kg)", price: 2.50 },
-  { name: "Lachs (500g)", price: 8.90 },
-  { name: "Hähnchen (1 kg)", price: 9.50 },
-  { name: "Rindfleisch (1 kg)", price: 15.00 },
-  { name: "Linsen (1 kg)", price: 3.00 },
-  { name: "Kartoffeln (2 kg)", price: 4.00 },
-  { name: "Sushi (Box)", price: 12.00 },
-  { name: "McDonalds Menü", price: 11.00 },
-  { name: "Gurke", price: 1.50 },
-  { name: "Tomaten (1 kg)", price: 3.50 },
-  { name: "Kiwi (4 Stück)", price: 2.80 },
-  { name: "Äpfel (1 kg)", price: 2.90 }
+  { name: "Brot (1 Laib)", price: 30.20 },
+  { name: "Nudeln (1 kg)", price: 20.00 },
+  { name: "Reis (1 kg)", price: 20.50 },
+  { name: "Lachs (500g)", price: 80.90 },
+  { name: "Hähnchen (1 kg)", price: 90.50 },
+  { name: "Rindfleisch (1 kg)", price: 150.00 },
+  { name: "Linsen (1 kg)", price: 30.00 },
+  { name: "Kartoffeln (2 kg)", price: 40.00 },
+  { name: "Sushi (Box)", price: 120.00 },
+  { name: "McDonalds Menü", price: 110.00 },
+  { name: "Gurke", price: 10.50 },
+  { name: "Tomaten (1 kg)", price: 30.50 },
+  { name: "Schokolade", price: 50.80 },
+  { name: "Kaffee", price: 70.80 },
+  { name: "Tee", price: 55.80 },
+  { name: "Limonade", price: 30.70 },
+  { name: "Kiwi (4 Stück)", price: 20.80 },
+  { name: "Äpfel (1 kg)", price: 20.90 }
 ];
 
 const randomEvents = [
@@ -155,7 +159,7 @@ function showFoodSelection() {
   let html = "<h2>Was kaufst du diesen Monat ein?</h2>";
   foodItems.forEach((item, index) => {
     html += `<button onclick="toggleFood(${index}, this)">
-      ${item.name} (${item.price} €)
+      ${item.name}
     </button>`;
   });
   html += `<button class="big-button" onclick="goCinema()">Weiter</button>`;
