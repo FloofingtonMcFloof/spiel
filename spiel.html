@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Monatssimulation</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #0f1c2e;
+  color: white;
+  text-align: center;
+  margin: 0;
+  padding: 40px;
+}
+
+button {
+  background: white;
+  border: none;
+  padding: 12px 20px;
+  margin: 8px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #ddd;
+}
+
+.screen {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
+.big-number {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.positive {
+  color: #2ecc71;
+}
+
+.negative {
+  color: #e74c3c;
+}
+
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: yellow;
+  top: -10px;
+  animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="screen1" class="screen active">
+  <h1>💰 Gehalt ist angekommen!</h1>
+  <p>Monatliches Einkommen: <strong>1.300 €</strong></p>
+  <button onclick="startGame()">Auszahlung erhalten</button>
+</div>
+
+<div id="screen2" class="screen">
+  <h2>🏠 Wohnung wählen</h2>
+  <button onclick="payRent(850)">Kleine Stadt nahe Wien – 40m² (850€)</button>
+  <button onclick="payRent(1400)">Große moderne Wohnung in Wien – 100m² (1400€)</button>
+  <button onclick="payRent(500)">Mini-Garçonnière in Wien – 20m² (500€)</button>
+</div>
+
+<div id="screen3" class="screen">
+  <h2>⚡ Notwendige Fixkosten</h2>
+  <p>Telefon, Internet, Wasser, Strom, Heizung</p>
+  <button onclick="payUtilities()">500€ bezahlen</button>
+</div>
+
+<div id="screen4" class="screen">
+  <h2>🛒 Lebensmitteleinkauf</h2>
+  <div id="foodButtons"></div>
+  <button onclick="nextScreen(5)">Weiter</button>
+</div>
+
+<div id="screen5" class="screen">
+  <h2>🎬 Kino mit Freunden?</h2>
+  <button onclick="payCinema()">Ja (25€)</button>
+  <button onclick="nextScreen(6)">Nein</button>
+</div>
+
+<div id="screen6" class="screen">
+  <h2>🎲 Unerwartetes Ereignis</h2>
+  <div id="randomEvent"></div>
+  <button onclick="showResult()">Wie viel bleibt übrig?</button>
+</div>
+
+<div id="screen7" class="screen">
+  <h2>Monatsergebnis</h2>
+  <div id="result" class="big-number"></div>
+</div>
+
+<script>
+
+let budget = 1300;
+
+function nextScreen(n) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("screen"+n).classList.add("active");
+}
+
+function startGame() {
+  launchConfetti();
+  setTimeout(()=> nextScreen(2), 2000);
+}
+
+function payRent(amount) {
+  budget -= amount;
+  nextScreen(3);
+}
+
+function payUtilities() {
+  budget -= 500;
+  nextScreen(4);
+}
+
+const foods = [
+  {name:"Brot", price:3},
+  {name:"Reis", price:2},
+  {name:"Nudeln", price:2},
+  {name:"Linsen", price:3},
+  {name:"Kartoffeln", price:4},
+  {name:"Huhn", price:8},
+  {name:"Rindfleisch", price:14},
+  {name:"Lachs", price:15},
+  {name:"Sushi", price:12},
+  {name:"McDonalds", price:10},
+  {name:"Gurke", price:1.5},
+  {name:"Tomaten", price:3},
+  {name:"Äpfel", price:4},
+  {name:"Kiwi", price:5}
+];
+
+foods.forEach(item=>{
+  let btn = document.createElement("button");
+  btn.innerText = item.name + " ("+item.price+"€)";
+  btn.onclick = ()=> budget -= item.price;
+  document.getElementById("foodButtons").appendChild(btn);
+});
+
+function payCinema(){
+  budget -= 25;
+  nextScreen(6);
+}
+
+const events = [
+  {text:"Waschmaschine kaputt (-250€)", cost:250},
+  {text:"Nachzahlung Strom (-120€)", cost:120},
+  {text:"Geburtstagsgeschenk (-40€)", cost:40},
+  {text:"Neue Schuhe (-80€)", cost:80}
+];
+
+function showRandomEvent(){
+  let e = events[Math.floor(Math.random()*events.length)];
+  document.getElementById("randomEvent").innerText = e.text;
+  budget -= e.cost;
+}
+
+showRandomEvent();
+
+function showResult(){
+  nextScreen(7);
+  let result = document.getElementById("result");
+  result.innerText = budget.toFixed(2) + " €";
+
+  if(budget < 0){
+    result.classList.add("negative");
+  } else {
+    result.classList.add("positive");
+  }
+}
+
+function launchConfetti(){
+  for(let i=0;i<80;i++){
+    let c = document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.backgroundColor=["#f1c40f","#e74c3c","#2ecc71","#3498db"][Math.floor(Math.random()*4)];
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+}
+
+</script>
+
+</body>
+</html>
