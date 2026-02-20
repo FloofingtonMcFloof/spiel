@@ -85,7 +85,7 @@ let budget = 0;
 const salary = 1600; // minimální měsíční příjem
 
 const foodItems = [
-  { name: "Brot (1 Laib)", price: 30.20 },
+  { name: "Brot", price: 30.20 },
   { name: "Nudeln (1 kg)", price: 20.00 },
   { name: "Reis (1 kg)", price: 20.50 },
   { name: "Lachs (500g)", price: 80.90 },
@@ -93,10 +93,10 @@ const foodItems = [
   { name: "Rindfleisch (1 kg)", price: 150.00 },
   { name: "Linsen (1 kg)", price: 30.00 },
   { name: "Kartoffeln (2 kg)", price: 40.00 },
-  { name: "Sushi (Box)", price: 120.00 },
+  { name: "Sushi Restaurant", price: 120.00 },
   { name: "McDonalds Menü", price: 110.00 },
   { name: "Gurke", price: 10.50 },
-  { name: "Tomaten (1 kg)", price: 30.50 },
+  { name: "Tomaten", price: 30.50 },
   { name: "Schokolade", price: 50.80 },
   { name: "Kaffee", price: 70.80 },
   { name: "Tee", price: 55.80 },
@@ -109,7 +109,7 @@ const randomEvents = [
   { text: "Waschmaschine kaputt 💥", cost: 250 },
   { text: "Nachzahlung für Energie 🔥", cost: 180 },
   { text: "Geburtstagsgeschenk 🎁", cost: 40 },
-  { text: "Neue Schuhe für dein Kind 👟", cost: 90 },
+  { text: "Neue Schuhe 👟", cost: 90 },
   { text: "Arztkosten 🏥", cost: 120 },
   { text: "Reparatur am Fahrrad 🚲", cost: 60 }
 ];
@@ -211,7 +211,6 @@ function showRandomEvent() {
       container.innerHTML = `
         <h2>${finalEvent.text}</h2>
         <p>Kosten: ${finalEvent.cost} €</p>
-        <button onclick="showResult()">Wie viel bleibt übrig?</button>
       `;
     }
   }, 100);
