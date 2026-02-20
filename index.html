@@ -2,160 +2,76 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Monatssimulation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monatliches Budget-Spiel</title>
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  background-color: #0f1c2e;
-  color: white;
+  background-color: #f4efe6;
   text-align: center;
-  margin: 0;
-  padding: 40px;
+  padding: 20px;
 }
 
 button {
-  background: white;
-  border: none;
+  display: block;
+  margin: 10px auto;
   padding: 12px 20px;
-  margin: 8px;
-  border-radius: 25px;
   font-size: 16px;
+  border-radius: 20px;
+  border: none;
+  background-color: white;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: #ddd;
+  transform: scale(1.05);
 }
 
-.screen {
-  display: none;
-}
-  
 .selected {
   background-color: #2e7d32;
   color: white;
-  transform: scale(1.05);
-}
-  
-.active {
-  display: block;
 }
 
-.big-number {
-  font-size: 48px;
-  font-weight: bold;
+h1, h2 {
+  margin-top: 20px;
 }
 
-.positive {
-  color: #2ecc71;
-}
-
-.negative {
-  color: #e74c3c;
+#result h1 {
+  font-size: 50px;
 }
 
 .confetti {
   position: fixed;
-  width: 8px;
-  height: 8px;
-  background: yellow;
-  top: -10px;
+  top: 0;
+  font-size: 30px;
   animation: fall 3s linear forwards;
 }
 
 @keyframes fall {
   to {
-    transform: translateY(100vh) rotate(360deg);
+    transform: translateY(100vh);
+    opacity: 0;
   }
 }
 </style>
 </head>
+
 <body>
 
-<div id="screen1" class="screen active">
-  <h1>💰 Gehalt ist angekommen!</h1>
-  <p>Monatliches Einkommen: <strong>1.300 €</strong></p>
-  <button onclick="startGame()">Auszahlung erhalten</button>
+<h1>Monatssimulation 💶</h1>
+
+<div id="content">
+  <button onclick="startGame()">💰 Gehalt ist eingegangen</button>
 </div>
 
-<div id="screen2" class="screen">
-  <h2>🏠 Wohnung wählen</h2>
-<button onclick="chooseRent(850)">
-Kleine Wohnung nahe Wien (40m²)
-</button>
-
-<button onclick="chooseRent(1400)">
-Moderne große Wohnung in Wien (100m²)
-</button>
-
-<button onclick="chooseRent(500)">
-Mini-Garçonnière im Altbau (20m²)
-</button>
-</div>
-
-<div id="screen3" class="screen">
-  <h2>⚡ Notwendige Fixkosten</h2>
-  <p>Telefon, Internet, Wasser, Strom, Heizung</p>
-  <button onclick="payUtilities()">500€ bezahlen</button>
-</div>
-
-<div id="screen4" class="screen">
-  <h2>🛒 Lebensmitteleinkauf</h2>
-  <div id="foodButtons"></div>
-  <button onclick="nextScreen(5)">Weiter</button>
-  button.onclick = () => {
-  budget -= item.price;
-
-  if (button.classList.contains("selected")) {
-    button.classList.remove("selected");
-    budget += item.price;
-  } else {
-    button.classList.add("selected");
-  }
-};
-</div>
-
-<div id="screen5" class="screen">
-  <h2>🎬 Kino mit Freunden?</h2>
-  <button onclick="payCinema()">Ja (25€)</button>
-  <button onclick="nextScreen(6)">Nein</button>
-</div>
-  
-<div id="screen6" class="screen">
-  <h2>🎲 Unerwartetes Ereignis</h2>
-  <div id="randomEvent"></div>
-  <button onclick="showResult()">Wie viel bleibt übrig?</button>
-</div>
-
-<div id="screen7" class="screen">
-  <h2>Monatsergebnis</h2>
-  <div id="result" class="big-number"></div>
-</div>
+<div id="eventContainer"></div>
+<div id="result"></div>
 
 <script>
-
-let budget = 1300;
-
-function nextScreen(n) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById("screen"+n).classList.add("active");
-}
-
-function startGame() {
-  launchConfetti();
-  setTimeout(()=> nextScreen(2), 2000);
-}
-
-function payRent(amount) {
-  budget -= amount;
-  nextScreen(3);
-}
-
-function payUtilities() {
-  budget -= 500;
-  nextScreen(4);
-}
+let budget = 0;
+const salary = 1600; // realistický nízký čistý měsíční příjem
 
 const foodItems = [
   { name: "Brot (1 Laib)", price: 3.20 },
@@ -174,54 +90,121 @@ const foodItems = [
   { name: "Äpfel (1 kg)", price: 2.90 }
 ];
 
-foods.forEach(item=>{
-  let btn = document.createElement("button");
-  btn.innerText = item.name + " ("+item.price+"€)";
-  btn.onclick = ()=> budget -= item.price;
-  document.getElementById("foodButtons").appendChild(btn);
-});
-
-function payCinema(){
-  budget -= 25;
-  nextScreen(6);
-}
-
-const events = [
-  {text:"Waschmaschine kaputt (-250€)", cost:250},
-  {text:"Nachzahlung Strom (-120€)", cost:120},
-  {text:"Geburtstagsgeschenk (-40€)", cost:40},
-  {text:"Neue Schuhe (-80€)", cost:80}
+const randomEvents = [
+  { text: "Waschmaschine kaputt 💥", cost: 250 },
+  { text: "Nachzahlung für Energie 🔥", cost: 180 },
+  { text: "Geburtstagsgeschenk 🎁", cost: 40 },
+  { text: "Neue Schuhe für dein Kind 👟", cost: 90 },
+  { text: "Arztkosten 🏥", cost: 120 },
+  { text: "Reparatur am Fahrrad 🚲", cost: 60 }
 ];
 
-function showRandomEvent(){
-  let e = events[Math.floor(Math.random()*events.length)];
-  document.getElementById("randomEvent").innerText = e.text;
-  budget -= e.cost;
+function startGame() {
+  budget = salary;
+  launchConfetti();
+  showHousing();
 }
 
-showRandomEvent();
+function launchConfetti() {
+  for (let i = 0; i < 30; i++) {
+    const conf = document.createElement("div");
+    conf.classList.add("confetti");
+    conf.innerHTML = "🎉";
+    conf.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(conf);
+    setTimeout(() => conf.remove(), 3000);
+  }
+}
+
+function showHousing() {
+  document.getElementById("content").innerHTML = `
+    <h2>Wo möchtest du wohnen?</h2>
+    <button onclick="chooseRent(850)">Kleine Wohnung nahe Wien (40m²)</button>
+    <button onclick="chooseRent(1400)">Moderne große Wohnung in Wien (100m²)</button>
+    <button onclick="chooseRent(500)">Mini-Garçonnière im Altbau (20m²)</button>
+  `;
+}
+
+function chooseRent(amount) {
+  budget -= amount;
+  document.getElementById("content").innerHTML = `
+    <h2>Fixkosten zahlen</h2>
+    <button onclick="payUtilities()">Telefon, Internet, Strom, Wasser zahlen</button>
+  `;
+}
+
+function payUtilities() {
+  budget -= 500;
+  showFoodSelection();
+}
+
+function showFoodSelection() {
+  let html = "<h2>Was kaufst du diesen Monat ein?</h2>";
+  foodItems.forEach((item, index) => {
+    html += `<button onclick="toggleFood(${index}, this)">
+      ${item.name} (${item.price} €)
+    </button>`;
+  });
+  html += `<button onclick="goCinema()">Weiter</button>`;
+  document.getElementById("content").innerHTML = html;
+}
+
+function toggleFood(index, button) {
+  if (button.classList.contains("selected")) {
+    button.classList.remove("selected");
+    budget += foodItems[index].price;
+  } else {
+    button.classList.add("selected");
+    budget -= foodItems[index].price;
+  }
+}
+
+function goCinema() {
+  document.getElementById("content").innerHTML = `
+    <h2>Willst du mit Freunden ins Kino gehen? 🎬</h2>
+    <button onclick="payCinema(true)">Ja</button>
+    <button onclick="payCinema(false)">Nein</button>
+  `;
+}
+
+function payCinema(choice) {
+  if (choice) {
+    budget -= 25;
+  }
+  showRandomEvent();
+}
+
+function showRandomEvent() {
+  const container = document.getElementById("eventContainer");
+  let counter = 0;
+
+  const shuffle = setInterval(() => {
+    const random = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+    container.innerHTML = `<h2>${random.text}</h2>`;
+    counter++;
+
+    if (counter > 15) {
+      clearInterval(shuffle);
+      const finalEvent = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+      budget -= finalEvent.cost;
+
+      container.innerHTML = `
+        <h2>${finalEvent.text}</h2>
+        <p>Kosten: ${finalEvent.cost} €</p>
+        <button onclick="showResult()">Wie viel bleibt übrig?</button>
+      `;
+    }
+  }, 100);
+}
 
 function showResult() {
   const result = document.getElementById("result");
-
   if (budget < 0) {
-    result.innerHTML = `<h1 style="color:red;font-size:48px;">${budget} €</h1>`;
+    result.innerHTML = `<h1 style="color:red;">${budget.toFixed(2)} €</h1>`;
   } else {
-    result.innerHTML = `<h1 style="color:green;font-size:48px;">${budget} €</h1>`;
+    result.innerHTML = `<h1 style="color:green;">${budget.toFixed(2)} €</h1>`;
   }
 }
-
-function launchConfetti(){
-  for(let i=0;i<80;i++){
-    let c = document.createElement("div");
-    c.className="confetti";
-    c.style.left=Math.random()*100+"vw";
-    c.style.backgroundColor=["#f1c40f","#e74c3c","#2ecc71","#3498db"][Math.floor(Math.random()*4)];
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),3000);
-  }
-}
-
 </script>
 
 </body>
