@@ -23,6 +23,13 @@ button {
   background-color: white;
   cursor: pointer;
   transition: 0.2s;
+  .big-button {
+  width: 80%;
+  max-width: 500px;
+  padding: 20px;
+  font-size: 20px;
+  margin: 20px auto;
+}
 }
 
 button:hover {
@@ -61,13 +68,15 @@ h1, h2 {
 <body>
 
 <h1>Monatssimulation 💶</h1>
+  <p>Willkommen zum Budget-Spiel!</p>
 
-<div id="content">
-  <button onclick="startGame()">💰 Gehalt ist eingegangen</button>
-</div>
-
-<div id="eventContainer"></div>
-<div id="result"></div>
+  <div><div><div>
+  <div id="content"></div> <!-- pro většinu kroků: bydlení, utilities, jídlo, kino -->
+  <div id="shuffleScreen" style="display:none;">
+    <div id="eventContainer"></div>
+    <button onclick="showResult()">Wie viel bleibt übrig?</button>
+  </div>
+  <div id="result"></div>
 
 <script>
 let budget = 0;
@@ -100,8 +109,8 @@ const randomEvents = [
 ];
 
 function startGame() {
-  budget = salary;
   launchConfetti();
+  budget = salary;
   showHousing();
 }
 
@@ -119,9 +128,9 @@ function launchConfetti() {
 function showHousing() {
   document.getElementById("content").innerHTML = `
     <h2>Wo möchtest du wohnen?</h2>
-    <button onclick="chooseRent(850)">Kleine Wohnung nahe Wien (40m²)</button>
-    <button onclick="chooseRent(1400)">Moderne große Wohnung in Wien (100m²)</button>
-    <button onclick="chooseRent(500)">Mini-Garçonnière im Altbau (20m²)</button>
+    <button class="big-button" onclick="chooseRent(850)">Kleine Wohnung nahe Wien (40m²)</button>
+    <button class="big-button" onclick="chooseRent(1400)">Moderne große Wohnung in Wien (100m²)</button>
+    <button class="big-button" onclick="chooseRent(500)">Mini-Garçonnière im Altbau (20m²)</button>
   `;
 }
 
@@ -129,7 +138,7 @@ function chooseRent(amount) {
   budget -= amount;
   document.getElementById("content").innerHTML = `
     <h2>Fixkosten zahlen</h2>
-    <button onclick="payUtilities()">Telefon, Internet, Strom, Wasser zahlen</button>
+    <button class="big-button" onclick="payUtilities()">Telefon, Internet, Strom, Wasser zahlen</button>
   `;
 }
 
@@ -162,8 +171,8 @@ function toggleFood(index, button) {
 function goCinema() {
   document.getElementById("content").innerHTML = `
     <h2>Willst du mit Freunden ins Kino gehen? 🎬</h2>
-    <button onclick="payCinema(true)">Ja</button>
-    <button onclick="payCinema(false)">Nein</button>
+    <button class="big-button" onclick="payCinema(true)">Ja</button>
+    <button class="big-button" onclick="payCinema(false)">Nein</button>
   `;
 }
 
@@ -171,6 +180,10 @@ function payCinema(choice) {
   if (choice) {
     budget -= 25;
   }
+  // Skryj content, zobraz shuffleScreen
+  document.getElementById("content").style.display = "none";
+  document.getElementById("shuffleScreen").style.display = "block";
+  
   showRandomEvent();
 }
 
