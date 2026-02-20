@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monatliches Budget-Spiel</title>
-
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -23,17 +22,19 @@ button {
   background-color: white;
   cursor: pointer;
   transition: 0.2s;
-  .big-button {
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.big-button {
   width: 80%;
   max-width: 500px;
   padding: 20px;
   font-size: 20px;
   margin: 20px auto;
-}
-}
-
-button:hover {
-  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
 .selected {
@@ -64,23 +65,24 @@ h1, h2 {
 }
 </style>
 </head>
-
 <body>
 
 <h1>Monatssimulation 💶</h1>
-  <p>Willkommen zum Budget-Spiel!</p>
 
-  <div><div><div>
-  <div id="content"></div> <!-- pro většinu kroků: bydlení, utilities, jídlo, kino -->
-  <div id="shuffleScreen" style="display:none;">
-    <div id="eventContainer"></div>
-    <button onclick="showResult()">Wie viel bleibt übrig?</button>
-  </div>
-  <div id="result"></div>
+<div id="content">
+  <button class="big-button" onclick="startGame()">💰 Gehalt ist eingegangen</button>
+</div>
+
+<div id="shuffleScreen" style="display:none;">
+  <div id="eventContainer"></div>
+  <button onclick="showResult()">Wie viel bleibt übrig?</button>
+</div>
+
+<div id="result"></div>
 
 <script>
 let budget = 0;
-const salary = 1600; // realistický nízký čistý měsíční příjem
+const salary = 1600; // minimální měsíční příjem
 
 const foodItems = [
   { name: "Brot (1 Laib)", price: 3.20 },
@@ -108,24 +110,27 @@ const randomEvents = [
   { text: "Reparatur am Fahrrad 🚲", cost: 60 }
 ];
 
-function startGame() {
-  launchConfetti();
-  budget = salary;
-  showHousing();
-}
-
-function launchConfetti() {
-  for (let i = 0; i < 30; i++) {
+function launchConfetti(row = false) {
+  let count = row ? 15 : 30;
+  for (let i = 0; i < count; i++) {
     const conf = document.createElement("div");
     conf.classList.add("confetti");
     conf.innerHTML = "🎉";
     conf.style.left = Math.random() * 100 + "vw";
+    if (row) conf.style.fontSize = "20px";
     document.body.appendChild(conf);
     setTimeout(() => conf.remove(), 3000);
   }
 }
 
+function startGame() {
+  budget = salary;
+  launchConfetti(); // konfetti při kliknutí
+  showHousing();
+}
+
 function showHousing() {
+  launchConfetti(true); // jedna řada při změně obrazovky
   document.getElementById("content").innerHTML = `
     <h2>Wo möchtest du wohnen?</h2>
     <button class="big-button" onclick="chooseRent(850)">Kleine Wohnung nahe Wien (40m²)</button>
@@ -136,6 +141,7 @@ function showHousing() {
 
 function chooseRent(amount) {
   budget -= amount;
+  launchConfetti(true);
   document.getElementById("content").innerHTML = `
     <h2>Fixkosten zahlen</h2>
     <button class="big-button" onclick="payUtilities()">Telefon, Internet, Strom, Wasser zahlen</button>
@@ -144,17 +150,19 @@ function chooseRent(amount) {
 
 function payUtilities() {
   budget -= 500;
+  launchConfetti(true);
   showFoodSelection();
 }
 
 function showFoodSelection() {
+  launchConfetti(true);
   let html = "<h2>Was kaufst du diesen Monat ein?</h2>";
   foodItems.forEach((item, index) => {
     html += `<button onclick="toggleFood(${index}, this)">
       ${item.name} (${item.price} €)
     </button>`;
   });
-  html += `<button onclick="goCinema()">Weiter</button>`;
+  html += `<button class="big-button" onclick="goCinema()">Weiter</button>`;
   document.getElementById("content").innerHTML = html;
 }
 
@@ -169,6 +177,7 @@ function toggleFood(index, button) {
 }
 
 function goCinema() {
+  launchConfetti(true);
   document.getElementById("content").innerHTML = `
     <h2>Willst du mit Freunden ins Kino gehen? 🎬</h2>
     <button class="big-button" onclick="payCinema(true)">Ja</button>
@@ -180,10 +189,9 @@ function payCinema(choice) {
   if (choice) {
     budget -= 25;
   }
-  // Skryj content, zobraz shuffleScreen
+  // přechod na shuffleScreen
   document.getElementById("content").style.display = "none";
   document.getElementById("shuffleScreen").style.display = "block";
-  
   showRandomEvent();
 }
 
