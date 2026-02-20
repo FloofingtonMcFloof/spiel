@@ -68,6 +68,15 @@ h1, h2 {
 <body>
 
 <h1>Monatssimulation 💶</h1>
+<div id="rolePanel" style="
+  margin:10px auto;
+  padding:8px 15px;
+  max-width:400px;
+  background:#ffffff;
+  border-radius:15px;
+  font-weight:bold;
+  display:none;
+"></div>
 
 <div id="content">
   <button class="big-button" onclick="startGame()">💰 Gehalt ist eingegangen</button>
@@ -81,7 +90,14 @@ h1, h2 {
 <div id="result"></div>
 
 <script>
+
+function getRoleFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("role");
+}
+  
 let budget = 0;
+  let roleName = "";
 const salary = 1600; // minimální měsíční příjem
 
 const foodItems = [
@@ -128,9 +144,33 @@ function launchConfetti(row = false) {
 }
 
 function startGame() {
-  budget = salary;
-  launchConfetti(); // konfetti při kliknutí
-  showHousing();
+
+  const role = getRoleFromURL();
+
+  if (role === "alleinerziehend") {
+    budget = 1350;
+    roleName = "👩‍👧‍👦 Alleinerziehende Mutter";
+
+  } else if (role === "student") {
+    budget = 900;
+    roleName = "🎓 Student mit Nebenjob";
+
+  } else if (role === "rentnerpaar") {
+    budget = 1700;
+    roleName = "👴👵 Rentnerpaar mit Mindestpension";
+
+  } else if (role === "arbeitslos") {
+    budget = 1100;
+    roleName = "👨‍💼 Seit 6 Monaten arbeitslos";
+  }
+
+  launchConfetti();
+
+  document.getElementById("content").innerHTML = `
+    <h2>${roleName}</h2>
+    <p><strong>Monatliches Einkommen: ${budget} €</strong></p>
+    <button class="big-button" onclick="showHousing()">Weiter</button>
+  `;
 }
 
 function showHousing() {
